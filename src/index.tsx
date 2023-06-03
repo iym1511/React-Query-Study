@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
 
+// global callbacks
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
