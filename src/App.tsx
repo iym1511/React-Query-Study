@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { useMutation, useQueries, useQuery } from 'react-query';
+import { QueryClient, useMutation, useQueries, useQuery } from 'react-query';
 import axios from 'axios';
 import { promises } from 'dns';
 
@@ -18,6 +18,7 @@ function App() {
     const response = await axios.get<jsonData[]>(`http://localhost:5000/jinhye`);
     return response.data
   }
+
   const fetchPosts2 = async():Promise<jsonData[]> => {
     const response = await axios.get<jsonData[]>(`http://localhost:5000/ilyun`);
     return response.data
@@ -54,21 +55,42 @@ function App() {
   const testMutation = useMutation(fetchPosts,{
     onMutate: (variables) => { 
       /* 요청 직전 처리, 여기서 반환하는 값은 하단 함수들의 context로 사용됨 */
+      console.log(variables)
     },
     onError: (error, variables, context) => {
       /* 오류 발생 시 처리 */
     },
     onSuccess: (data, variables, context) => {
       /* 성공 시 처리 */
+      console.log(data)
+      console.log(variables)
     },
     onSettled: (data, error, variables, context) => {
       /* 성공 여부와 관계없이 작업이 끝나면 처리 */
     }
   });
-  
-console.log(testMutation.mutate);
 
-  if(isLoading) {
+  const queryClient = new QueryClient();
+
+  const mutation = useMutation(
+    'UpdateUser',
+    (param: any) => axios.put(`http://localhost:5000/ilyun`,param),
+    {
+      onSuccess: (data, variables, context) => {
+        queryClient.setQueryData('getUser', data)
+        // console.log('onSuccess', data);
+      }
+    }
+    );
+    const handleUpdateUser = () => {
+      mutation.mutate({
+        id: 1,
+        love: 1,
+        name: 'Updated User'
+      });
+    };
+    
+    if(isLoading) {
     return <div>Loading...</div>
   }
   if(isError) {
@@ -113,6 +135,9 @@ console.log(testMutation.mutate);
           </div>
         ))
       }
+      <div>
+        <button onClick={handleUpdateUser}>mutate 버튼</button>
+      </div>
     </div>
   );
 }
