@@ -95,16 +95,21 @@ function App() {
       users.map(user => {
         return {
           queryKey: ['getUser', user],
-          queryFn: () => axios.get(`https://jsonplaceholder.typicode.com/users/${user}`)
+          queryFn: () => axios.get(`http://localhost:5000/jinhye/${user}`)
         }
       })
     );
-    console.log(results)
+    // console.log(results)
+
+    const [text, setText] = useState<string>("");
+    const texthandle = (e:React.ChangeEvent<HTMLInputElement>):void => {
+      setText(e.target.value)
+    }
 
       const mutation5 = useMutation(
         'updateUser',
         (updatedUser: any) => axios.put(
-          `https://jsonplaceholder.typicode.com/users/1`,
+          `http://localhost:5000/jinhye/1`,
           updatedUser
         ),
         {
@@ -117,17 +122,25 @@ function App() {
         }
       );
       
+      const onReset = ():void => {
+        setText("")
+      }
       // 사용자 정보 수정을 실행하는 함수
-      const handleUpdateUser5 = () => {
+      const handleUpdateUser5 = ():void => {
         const updatedUser2 = {
           id: 1,
-          name: 'Updated Name',
-          email: 'updatedemail@example.com'
+          name: text,
           // 필요한 경우 다른 필드도 업데이트 가능
         };
-        mutation5.mutate(updatedUser2);
+        if(text !== ""){
+          mutation5.mutate(updatedUser2);
+          alert("데이터 수정 완료");
+        }else{
+          alert("수정할 내용을 작성해주세요.")
+        }
+        onReset();
       };
-        console.log(mutation5)
+        // console.log(mutation5)
 
 
     
@@ -184,6 +197,7 @@ function App() {
         ))
       } */}
       <div>
+        <input type="text" value={text} onChange={texthandle}/>
         <button onClick={handleUpdateUser5}>mutate 버튼</button>
       </div>
     </div>
