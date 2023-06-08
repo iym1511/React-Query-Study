@@ -30,11 +30,11 @@ function App() {
   
   
   const { status, isFetching, data, error } = useQuery<jsonData[]>('testJson', fetchPosts);
-  
+
   // 아래 코드로 변수명을 지정해줘서도 사용가능한데
   // 그 이유는 가독성과 중복방지를 위함이다.
   const jinhyeQuery = useQuery<jsonData[]>('testJson', fetchPosts, { useErrorBoundary: (error: any) => error.response?.status >= 500 });
-  const ilyun = useQuery<jsonData[]>('testJson2', fetchPosts2);
+  // const ilyun = useQuery<jsonData[]>('testJson2', fetchPosts2);
   
   
   
